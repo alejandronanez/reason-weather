@@ -114,8 +114,8 @@ let getApiUrl = city =>
   ++ city
   ++ "&appid=c8cffee9248c82e52349a94f517435ec";
 
-let fetchWeather = () => {
-  "London"
+let fetchWeather = (~searchInput) => {
+  searchInput
   |> getApiUrl
   |> Bs_fetch.fetch
   |> Js.Promise.then_(Bs_fetch.Response.text)
