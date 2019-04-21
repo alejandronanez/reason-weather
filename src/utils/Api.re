@@ -76,7 +76,7 @@ module Decode = {
   let cityWeatherWind = json =>
     Json.Decode.{
       speed: json |> field("speed", Json.Decode.float),
-      deg: json |> field("def", Json.Decode.float),
+      deg: json |> field("deg", Json.Decode.float),
     };
 
   let cityWeatherClouds = json =>
@@ -94,18 +94,32 @@ module Decode = {
 
   let cityWeather = json =>
     Json.Decode.{
-      coord: json |> field("cityWeatherCoordinates", cityWeatherCoordinates),
-      weather:
-        json |> field("cityWeatherReports", array(cityWeatherReports)),
+      coord: json |> field("coord", cityWeatherCoordinates),
+      weather: json |> field("weather", array(cityWeatherReports)),
       base: json |> field("base", string),
-      main: json |> field("cityWeatherMain", cityWeatherMain),
+      main: json |> field("main", cityWeatherMain),
       visibility: json |> field("visibility", int),
-      wind: json |> field("cityWeatherWind", cityWeatherWind),
-      clouds: json |> field("cityWeatherClouds", cityWeatherClouds),
+      wind: json |> field("wind", cityWeatherWind),
+      clouds: json |> field("clouds", cityWeatherClouds),
       dt: json |> field("dt", int),
-      sys: json |> field("cityWeatherSys", cityWeatherSys),
+      sys: json |> field("sys", cityWeatherSys),
       id: json |> field("id", int),
       name: json |> field("name", string),
       cod: json |> field("cod", int),
     };
+};
+
+let getApiUrl = city =>
+  "https://api.openweathermap.org/data/2.5/weather?q="
+  ++ city
+  ++ "&appid=c8cffee9248c82e52349a94f517435ec";
+
+let fetchWeather = () => {
+  "London"
+  |> getApiUrl
+  |> Bs_fetch.fetch
+  |> Js.Promise.then_(Bs_fetch.Response.text)
+  |> Js.Promise.then_(jsonText =>
+       jsonText |> Js.Json.parseExn |> Decode.cityWeather |> Js.Promise.resolve
+     );
 };
