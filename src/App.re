@@ -1,7 +1,9 @@
 let fetchWeather = _event => {
   Api.fetchWeather()
-  |> Js.Promise.then_(response => {
-       Js.log(response);
+  // We need to explicitly say what's the response type in order to query it
+  // SO: https://stackoverflow.com/questions/48779363/unbound-record-field-name-in-reason-component/48780276#48780276
+  |> Js.Promise.then_((response: Api.cityWeather) => {
+       Js.log(response.dt);
        Js.Promise.resolve();
      })
   |> Js.Promise.catch(err => {
