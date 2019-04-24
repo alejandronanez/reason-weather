@@ -1,5 +1,7 @@
-let getForecasts = (forecast: Types.weatherInformation) => {
-  <li key={forecast.name}> <Forecast /> </li>;
+let getForecasts = (forecast: Api.cityWeatherReports) => {
+  <li key={forecast.id->string_of_int}>
+    <Forecast description={forecast.description} />
+  </li>;
 };
 
 [@react.component]
@@ -8,14 +10,7 @@ let make = (~forecasts: Belt.List.t(Api.cityWeatherReports), ~temp, ~name) => {
     <h1> name->React.string </h1>
     <h2> {temp->Js.Float.toString->React.string} </h2>
     <ul>
-      {forecasts
-       ->Belt.List.map(weatherReport =>
-           <li key={weatherReport.id->string_of_int}>
-             weatherReport.description->React.string
-           </li>
-         )
-       ->Belt.List.toArray
-       ->React.array}
+      {forecasts->Belt.List.map(getForecasts)->Belt.List.toArray->React.array}
     </ul>
   </div>;
 };

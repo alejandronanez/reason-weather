@@ -1,4 +1,4 @@
 [@react.component]
-let make = () => {
-  <> "I am a forecast"->React.string </>;
+let make = (~description) => {
+  <div> description->React.string </div>;
 };
