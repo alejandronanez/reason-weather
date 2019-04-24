@@ -1,13 +1,13 @@
 type action =
-  | FetchWeatherData(Types.weatherInformation);
+  | FetchWeatherData(Types.cityWeather);
 
 type state = {
   loading: bool,
   city: option(string),
-  weatherInformation: option(Types.weatherInformation),
+  cityWeather: option(Types.cityWeather),
 };
 
-let initialState = {city: None, loading: false, weatherInformation: None};
+let initialState = {city: None, loading: false, cityWeather: None};
 
 let fetchWeather = (dispatch, ~searchInput) => {
   Api.fetchWeather(~searchInput)
@@ -36,7 +36,7 @@ let reducer = (state, action) =>
   switch (action) {
   | FetchWeatherData(weatherData) => {
       ...state,
-      weatherInformation: Some(weatherData),
+      cityWeather: Some(weatherData),
     }
   };
 
@@ -46,19 +46,11 @@ let make = () => {
   let handleSearchFormSubmission = searchInput =>
     fetchWeather(dispatch, ~searchInput);
 
-  let weatherComponent =
-    switch (state.weatherInformation) {
-    | Some(weather) =>
-      <Forecasts
-        forecasts={weather.forecasts}
-        temp={weather.temp}
-        name={weather.name}
-      />
+  let cityWeather =
+    switch (state.cityWeather) {
+    | Some({forecasts, temp, name}) => <Forecasts forecasts temp name />
     | None => <span />
     };
 
-  <div>
-    <SearchForm onSubmit=handleSearchFormSubmission />
-    weatherComponent
-  </div>;
+  <div> <SearchForm onSubmit=handleSearchFormSubmission /> cityWeather </div>;
 };

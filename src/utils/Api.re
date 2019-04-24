@@ -120,6 +120,6 @@ let fetchWeather = (~searchInput) => {
   |> Bs_fetch.fetch
   |> Js.Promise.then_(Bs_fetch.Response.text)
   |> Js.Promise.then_(jsonText =>
-       jsonText |> Js.Json.parseExn |> Decode.cityWeather |> Js.Promise.resolve
+       jsonText->Js.Json.parseExn->Decode.cityWeather->Js.Promise.resolve
      );
 };
