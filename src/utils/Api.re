@@ -36,7 +36,7 @@ type cityWeatherSys = {
 
 type cityWeather = {
   coord: cityWeatherCoordinates,
-  weather: array(cityWeatherReports),
+  weather: Belt.List.t(cityWeatherReports),
   base: string,
   main: cityWeatherMain,
   visibility: int,
@@ -95,7 +95,7 @@ module Decode = {
   let cityWeather = json =>
     Json.Decode.{
       coord: json |> field("coord", cityWeatherCoordinates),
-      weather: json |> field("weather", array(cityWeatherReports)),
+      weather: json |> field("weather", list(cityWeatherReports)),
       base: json |> field("base", string),
       main: json |> field("main", cityWeatherMain),
       visibility: json |> field("visibility", int),

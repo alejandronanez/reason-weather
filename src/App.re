@@ -1,16 +1,10 @@
-type weatherInformation = {
-  forecasts: array(Api.cityWeatherReports),
-  temp: float,
-  name: string,
-};
-
 type action =
-  | FetchWeatherData(weatherInformation);
+  | FetchWeatherData(Types.weatherInformation);
 
 type state = {
   loading: bool,
   city: option(string),
-  weatherInformation: option(weatherInformation),
+  weatherInformation: option(Types.weatherInformation),
 };
 
 let initialState = {city: None, loading: false, weatherInformation: None};
@@ -55,7 +49,7 @@ let make = () => {
   let weatherComponent =
     switch (state.weatherInformation) {
     | Some(weather) =>
-      <Weather
+      <Forecasts
         forecasts={weather.forecasts}
         temp={weather.temp}
         name={weather.name}
