@@ -1,4 +1,5 @@
 type action =
+  | LoadingWeatherData(bool)
   | FetchWeatherData(Types.cityWeather);
 
 type state = {
@@ -10,6 +11,7 @@ type state = {
 let initialState = {city: None, loading: false, cityWeather: None};
 
 let fetchWeather = (dispatch, ~searchInput) => {
+  dispatch(LoadingWeatherData(true));
   Api.fetchWeather(~searchInput)
   // We need to explicitly say what's the response type in order to query it
   // SO: https://stackoverflow.com/questions/48779363/unbound-record-field-name-in-reason-component/48780276#48780276
@@ -21,12 +23,14 @@ let fetchWeather = (dispatch, ~searchInput) => {
            name: response.name,
          }),
        );
+       dispatch(LoadingWeatherData(false));
        Js.Promise.resolve();
      })
   |> Js.Promise.catch(err => {
        Js.log(
          "There was a problem getting weather data" ++ Js.String.make(err),
        );
+       dispatch(LoadingWeatherData(false));
        Js.Promise.resolve();
      })
   |> ignore;
@@ -34,6 +38,7 @@ let fetchWeather = (dispatch, ~searchInput) => {
 
 let reducer = (state, action) =>
   switch (action) {
+  | LoadingWeatherData(loading) => {...state, loading}
   | FetchWeatherData(weatherData) => {
       ...state,
       cityWeather: Some(weatherData),
@@ -46,11 +51,18 @@ let make = () => {
   let handleSearchFormSubmission = searchInput =>
     fetchWeather(dispatch, ~searchInput);
 
+  let loading =
+    state.loading ? <span> "Loading"->React.string </span> : ReasonReact.null;
+
   let cityWeather =
     switch (state.cityWeather) {
     | Some({forecasts, temp, name}) => <Forecasts forecasts temp name />
     | None => ReasonReact.null
     };
 
-  <div> <SearchForm onSubmit=handleSearchFormSubmission /> cityWeather </div>;
+  <div>
+    <SearchForm onSubmit=handleSearchFormSubmission />
+    loading
+    cityWeather
+  </div>;
 };
