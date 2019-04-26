@@ -1,14 +1,21 @@
 type action =
+  | SetError(string)
   | LoadingWeatherData(bool)
   | FetchWeatherData(Types.cityWeather);
 
 type state = {
   loading: bool,
+  error: option(string),
   city: option(string),
   cityWeather: option(Types.cityWeather),
 };
 
-let initialState = {city: None, loading: false, cityWeather: None};
+let initialState = {
+  city: None,
+  error: None,
+  loading: false,
+  cityWeather: None,
+};
 
 let fetchWeather = (dispatch, ~searchInput) => {
   dispatch(LoadingWeatherData(true));
@@ -23,13 +30,15 @@ let fetchWeather = (dispatch, ~searchInput) => {
            name: response.name,
          }),
        );
+       dispatch(SetError(""));
        dispatch(LoadingWeatherData(false));
        Js.Promise.resolve();
      })
   |> Js.Promise.catch(err => {
        Js.log(
-         "There was a problem getting weather data" ++ Js.String.make(err),
+         "There was a problem getting weather data: " ++ Js.String.make(err),
        );
+       dispatch(SetError("There was a problem loading your data"));
        dispatch(LoadingWeatherData(false));
        Js.Promise.resolve();
      })
@@ -43,6 +52,7 @@ let reducer = (state, action) =>
       ...state,
       cityWeather: Some(weatherData),
     }
+  | SetError(errorMessage) => {...state, error: Some(errorMessage)}
   };
 
 [@react.component]
@@ -51,6 +61,11 @@ let make = () => {
   let handleSearchFormSubmission = searchInput =>
     fetchWeather(dispatch, ~searchInput);
 
+  let error =
+    switch (state.error) {
+    | Some(message) => <span> message->React.string </span>
+    | None => ReasonReact.null
+    };
   let loading =
     state.loading ? <span> "Loading"->React.string </span> : ReasonReact.null;
 
@@ -62,6 +77,7 @@ let make = () => {
 
   <div>
     <SearchForm onSubmit=handleSearchFormSubmission />
+    error
     loading
     cityWeather
   </div>;
