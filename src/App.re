@@ -49,7 +49,7 @@ let make = () => {
   let cityWeather =
     switch (state.cityWeather) {
     | Some({forecasts, temp, name}) => <Forecasts forecasts temp name />
-    | None => <span />
+    | None => ReasonReact.null
     };
 
   <div> <SearchForm onSubmit=handleSearchFormSubmission /> cityWeather </div>;
