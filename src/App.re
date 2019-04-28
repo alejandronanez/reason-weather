@@ -1,9 +1,11 @@
 type action =
+  | SetSearchTerm(string)
   | SetError(string)
   | LoadingWeatherData(bool)
   | FetchWeatherData(Types.cityWeather);
 
 type state = {
+  searchTerm: string,
   loading: bool,
   error: option(string),
   city: option(string),
@@ -11,6 +13,7 @@ type state = {
 };
 
 let initialState = {
+  searchTerm: "",
   city: None,
   error: None,
   loading: false,
@@ -47,6 +50,7 @@ let fetchWeather = (dispatch, ~searchInput) => {
 
 let reducer = (state, action) =>
   switch (action) {
+  | SetSearchTerm(searchTerm) => {...state, searchTerm}
   | LoadingWeatherData(loading) => {...state, loading}
   | FetchWeatherData(weatherData) => {
       ...state,
@@ -58,9 +62,10 @@ let reducer = (state, action) =>
 [@react.component]
 let make = () => {
   let (state, dispatch) = React.useReducer(reducer, initialState);
-  let handleSearchFormSubmission = searchInput =>
-    fetchWeather(dispatch, ~searchInput);
-
+  let handleSearchFormSubmission = () =>
+    fetchWeather(dispatch, ~searchInput=state.searchTerm);
+  let handleSearchFormChange = newSearchTermValue =>
+    dispatch(SetSearchTerm(newSearchTermValue));
   let error =
     switch (state.error) {
     | Some(message) => <span> message->React.string </span>
@@ -76,7 +81,11 @@ let make = () => {
     };
 
   <div>
-    <SearchForm onSubmit=handleSearchFormSubmission />
+    <SearchForm
+      value={state.searchTerm}
+      onChange=handleSearchFormChange
+      onSubmit=handleSearchFormSubmission
+    />
     error
     loading
     cityWeather
