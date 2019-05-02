@@ -1,3 +1,16 @@
+module Styles = {
+  open Emotion;
+
+  let wrapper = [%css
+    [
+      display(`grid),
+      margin2(`zero, `auto),
+      maxWidth(px(1024)),
+      paddingTop(px(20)),
+    ]
+  ];
+};
+
 type action =
   | SetSearchTerm(string)
   | SetError(string)
@@ -80,7 +93,7 @@ let make = () => {
     | None => ReasonReact.null
     };
 
-  <div>
+  <div className=Styles.wrapper>
     <SearchForm
       value={state.searchTerm}
       onChange=handleSearchFormChange
