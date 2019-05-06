@@ -8,5 +8,5 @@ global(
     ),
   ],
 );
-
-global("body", [backgroundColor(`hex("F0F4F8")), margin(px(0))]);
+global("body", [backgroundColor(`hex("FAF9F7")), margin(px(0))]);
+global("*", [boxSizing(`borderBox)]);
