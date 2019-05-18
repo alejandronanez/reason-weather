@@ -1,5 +1,9 @@
 # reason-weather
 
+Weather Application written in ReasonML!
+
+[![Netlify Status](https://api.netlify.com/api/v1/badges/e53cd92d-1108-4b54-aefa-7466ffc5567a/deploy-status)](https://app.netlify.com/sites/alejandronanez-reason-weather/deploys)
+
 ## Run Project
 
 ```sh
