@@ -69,6 +69,7 @@ let reducer = (state, action) =>
       ...state,
       cityWeather: Some(weatherData),
     }
+  | SetError("") => {...state, error: None}
   | SetError(errorMessage) => {...state, error: Some(errorMessage)}
   };
 
@@ -81,15 +82,17 @@ let make = () => {
     dispatch(SetSearchTerm(newSearchTermValue));
   let error =
     switch (state.error) {
-    | Some(message) => <span> message->React.string </span>
+    | Some(message) => <Wrapper> message->React.string </Wrapper>
     | None => ReasonReact.null
     };
   let loading =
-    state.loading ? <span> "Loading"->React.string </span> : ReasonReact.null;
+    state.loading
+      ? <Wrapper> "Loading"->React.string </Wrapper> : ReasonReact.null;
 
   let cityWeather =
     switch (state.cityWeather) {
-    | Some({forecasts, temp, name}) => <Forecasts forecasts temp name />
+    | Some({forecasts, temp, name}) =>
+      <Wrapper> <Forecasts forecasts temp name /> </Wrapper>
     | None => ReasonReact.null
     };
 
