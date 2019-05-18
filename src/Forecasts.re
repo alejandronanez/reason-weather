@@ -8,7 +8,7 @@ let getForecasts = (forecast: Api.cityWeatherReports) => {
 let make = (~forecasts: Belt.List.t(Api.cityWeatherReports), ~temp, ~name) => {
   <div>
     <h1> name->React.string </h1>
-    <h2> {temp->Js.Float.toString->React.string} </h2>
+    <h2> {(temp->Js.Float.toString ++ " C")->React.string} </h2>
     <ul>
       {forecasts->Belt.List.map(getForecasts)->Belt.List.toArray->React.array}
     </ul>

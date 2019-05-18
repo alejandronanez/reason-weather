@@ -112,7 +112,8 @@ module Decode = {
 let getApiUrl = city =>
   "https://api.openweathermap.org/data/2.5/weather?q="
   ++ city
-  ++ "&appid=c8cffee9248c82e52349a94f517435ec";
+  ++ "&appid=c8cffee9248c82e52349a94f517435ec"
+  ++ "&units=metric";
 
 let fetchWeather = (~searchInput) => {
   searchInput
