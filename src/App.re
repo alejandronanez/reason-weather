@@ -13,7 +13,7 @@ module Styles = {
 
 type action =
   | SetSearchTerm(string)
-  | SetError(string)
+  | SetError(option(string))
   | LoadingWeatherData(bool)
   | FetchWeatherData(Types.cityWeather);
 
@@ -35,6 +35,8 @@ let initialState = {
 
 let fetchWeather = (dispatch, ~searchInput) => {
   dispatch(LoadingWeatherData(true));
+  dispatch(SetError(None));
+
   Api.fetchWeather(~searchInput)
   // We need to explicitly say what's the response type in order to query it
   // SO: https://stackoverflow.com/questions/48779363/unbound-record-field-name-in-reason-component/48780276#48780276
@@ -46,7 +48,6 @@ let fetchWeather = (dispatch, ~searchInput) => {
            name: response.name,
          }),
        );
-       dispatch(SetError(""));
        dispatch(LoadingWeatherData(false));
        Js.Promise.resolve();
      })
@@ -54,7 +55,7 @@ let fetchWeather = (dispatch, ~searchInput) => {
        Js.log(
          "There was a problem getting weather data: " ++ Js.String.make(err),
        );
-       dispatch(SetError("There was a problem loading your data"));
+       dispatch(SetError(Some("There was a problem loading your data")));
        dispatch(LoadingWeatherData(false));
        Js.Promise.resolve();
      })
@@ -69,8 +70,8 @@ let reducer = (state, action) =>
       ...state,
       cityWeather: Some(weatherData),
     }
-  | SetError("") => {...state, error: None}
-  | SetError(errorMessage) => {...state, error: Some(errorMessage)}
+  | SetError(None) => {...state, error: None}
+  | SetError(Some(errorMessage)) => {...state, error: Some(errorMessage)}
   };
 
 [@react.component]
