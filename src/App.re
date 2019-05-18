@@ -12,13 +12,13 @@ module Styles = {
 };
 
 type action =
-  | SetSearchTerm(string)
+  | SetSearchTerm(option(string))
   | SetError(option(string))
   | LoadingWeatherData(bool)
   | FetchWeatherData(Types.cityWeather);
 
 type state = {
-  searchTerm: string,
+  searchTerm: option(string),
   loading: bool,
   error: option(string),
   city: option(string),
@@ -26,7 +26,7 @@ type state = {
 };
 
 let initialState = {
-  searchTerm: "",
+  searchTerm: None,
   city: None,
   error: None,
   loading: false,
@@ -64,7 +64,11 @@ let fetchWeather = (dispatch, ~searchInput) => {
 
 let reducer = (state, action) =>
   switch (action) {
-  | SetSearchTerm(searchTerm) => {...state, searchTerm}
+  | SetSearchTerm(None) => {...state, searchTerm: None}
+  | SetSearchTerm(Some(searchTerm)) => {
+      ...state,
+      searchTerm: Some(searchTerm),
+    }
   | LoadingWeatherData(loading) => {...state, loading}
   | FetchWeatherData(weatherData) => {
       ...state,
@@ -77,8 +81,9 @@ let reducer = (state, action) =>
 [@react.component]
 let make = () => {
   let (state, dispatch) = React.useReducer(reducer, initialState);
+  let searchTerm = Belt.Option.getWithDefault(state.searchTerm, "");
   let handleSearchFormSubmission = () =>
-    fetchWeather(dispatch, ~searchInput=state.searchTerm);
+    fetchWeather(dispatch, ~searchInput=searchTerm);
   let handleSearchFormChange = newSearchTermValue =>
     dispatch(SetSearchTerm(newSearchTermValue));
   let error =
@@ -99,7 +104,7 @@ let make = () => {
 
   <div className=Styles.wrapper>
     <SearchForm
-      value={state.searchTerm}
+      value=searchTerm
       onChange=handleSearchFormChange
       onSubmit=handleSearchFormSubmission
     />
